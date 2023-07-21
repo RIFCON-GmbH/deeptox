@@ -2,7 +2,6 @@ inst/doc
 /doc/
 /Meta/
 .Rproj.user
-.Rbuildignore
 .Rhistory
 .dockerignore
 Dockerfile
