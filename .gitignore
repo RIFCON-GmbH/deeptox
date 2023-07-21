@@ -5,7 +5,6 @@ inst/doc
 .Rbuildignore
 .Rhistory
 .dockerignore
-DESCRIPTION
 Dockerfile
 .Rdata
 .httr-oauth

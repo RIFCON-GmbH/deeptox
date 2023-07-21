@@ -1,0 +1,68 @@
+Package: deeptox
+Title: A User-Friendly R-Shiny Application To Make DEB-TKTD Projections Of
+    Sublethal Effects Of Chemical Exposure
+Version: 1.0.0
+Authors@R: c(
+    person("Torben", "Wittwer", , "Torben.Wittwer@rifcon.de", role = c("cre", "aut")),
+    person("Oliver", "Jakoby", role = "aut"),
+    person("Thomas", "Martin", role = "aut"),
+    person("Neil", "Sherborne", role = "aut"),
+    person("Roman", "Ashauer", role = "aut"),
+    person("Tjalling", "Jager", role = "rev"),
+    person("Syngenta", role = c("fnd", "cph")),
+    person("RIFCON GmbH", role = "cph")
+  )
+Description: This tool makes predictions of sublethal effects based on
+    different exposure profiles and user-provided input parameters. It is
+    based on the simplified DEB-TKTD model described by Jager (2020). The
+    predicted output is the multiplication factor that would need to be
+    applied to a given exposure profile to reduce growth or reproduction
+    by X% (termed EPx by EFSA). The results are then directly compiled in
+    a basic report document.
+License: GPL (>= 3)
+Depends: 
+    R (>= 2.10)
+Imports: 
+    attempt,
+    config (>= 0.3.1),
+    dashboardthemes,
+    deSolve,
+    digest,
+    dplyr,
+    DT,
+    flextable,
+    ggplot2,
+    glue,
+    golem (>= 0.3.1),
+    htmltools,
+    lubridate,
+    magrittr,
+    officedown,
+    officer,
+    pkgbuild,
+    pkgload,
+    rmarkdown,
+    rootSolve,
+    shiny (>= 1.6.0),
+    shinybusy,
+    shinydashboard,
+    shinyjs,
+    stringr,
+    tibble,
+    tidyr,
+    tools,
+    units,
+    xfun
+Suggests: 
+    attachment,
+    knitr,
+    spelling,
+    testthat (>= 3.0.0)
+VignetteBuilder: 
+    knitr
+Config/testthat/edition: 3
+Encoding: UTF-8
+Language: en-US
+LazyData: true
+NeedsCompilation: yes
+RoxygenNote: 7.2.3
