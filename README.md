@@ -15,7 +15,7 @@ The software uses a ‘moving time window’ approach in which long exposure pro
 You can install the most recent version of deeptox from github with the following command
 ``` r
 # install.packages("remotes")
-remotes::install_github("rifcon/deeptox")
+remotes::install_github("RIFCON-GmbH/deeptox")
 ```
 to start the Shiny app use
 
