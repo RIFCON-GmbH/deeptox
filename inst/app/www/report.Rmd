@@ -1,0 +1,167 @@
+---
+title: ""
+author: ""
+date: ""
+output: 
+  officedown::rdocx_document
+  word_document
+  html_document
+params:
+  expProfiles: NA
+  parameters: NA
+  metaData: NA
+  profileResults: NA
+  summaryResults: NA
+  plotResults: NA
+  simulationSettings: NA
+  modelParameters: NA
+---
+```{r importPackagesEtc, echo=FALSE, message=FALSE, warning=FALSE}
+options(scipen = 999) # non-scientific number notation
+
+library(dplyr)
+library(flextable)
+library(xfun)
+library(officer)
+library(officedown)
+library(deeptox)
+
+
+
+tabNum <- officer::run_autonum(seq_id = "Table",
+                                pre_label = "Table\u00A0",
+                                post_label = ": ")
+
+```
+
+```{r prepImportedData, echo=FALSE, message=FALSE}
+for( i in names(params) )
+  assign(i, params[[i]])
+```
+
+```{r settingConst, echo=FALSE, message=FALSE, results='hide'}
+
+paraDescTable <- read.table(paste0(system.file(package="deeptox"),"/app/www/paraDesc.csv"), sep=";", header=T, quote="\"", check.names=FALSE)
+
+
+
+
+#n_profiles = length(vector)
+n_profiles <- length(summaryResults[,"profileNames"])
+n_profiles
+#n_passes = sum(vector)
+n_passes <- sum(summaryResults[,"pass_fail_results"]=="Pass")
+n_passes
+#n_failures = n_profiles – n_passes
+n_failures <- n_profiles - n_passes
+n_failures
+
+whichFailures <- summaryResults[,"profileNames"][which(summaryResults[,"pass_fail_results"] == "Fail")]
+whichFailures
+```
+
+
+:::{custom-style="Title"}
+Report DEB-TKTD modelling
+:::
+:::{custom-style="Date"}
+Report generated with deeptox v`r packageVersion("deeptox")` on `r date()`.
+:::
+
+
+# Introduction
+DeEP (DEB-TKTD EPx Predictor; Wittwer et al. 2023) was used to predict the effects of `r metaData[["Compound"]]` on *`r metaData[["Species"]]`*. Using the provided parameter set and exposure profile`r pluralS(n_profiles)`, the EP~`r simulationSettings[["ECpct"]]`~ multiplier was predicted with DEB-TKTD modelling (namely the DEBtox 2019 DEB-TKTD model; Jager 2020) to a series of ‘virtual toxicity tests’ (VTTs). This is the factor by which the exposure profiles would need to be multiplied by to cause a `r simulationSettings[["ECpct"]]`% reduction in growth, reproduction, or survival. 
+
+# Overall results
+
+The risk assessment criterion was`r ifelse(n_profiles==1 & n_failures==n_profiles," not","")` met for `r ifelse(n_profiles==1,"", ifelse(n_passes==n_profiles, "all of", ifelse(n_failures==n_profiles, "none of", "some of")))` the exposure profile`r pluralS(n_profiles)` provided.
+`r ifelse(n_profiles==1,"In this case", ifelse(n_passes==n_profiles, "In all cases", ifelse(n_failures==n_profiles, "In none of the cases", paste0("In only ",n2w(n_passes), " of ", n2w(n_profiles), " cases"))))` the EP~`r simulationSettings[["ECpct"]]`~ multiplier `r ifelse(n_profiles==1 & n_failures==n_profiles ,"was below","exceeded")` the critical value of `r simulationSettings[["passFail"]]`.
+Therefore, `r ifelse(n_passes==n_profiles, paste0("a ",simulationSettings[["ECpct"]],"% reduction in growth, survival, or reproduction would not be expected unless the exposure profile",pluralS(n_profiles)," ",ifelse(n_profiles==1,"was", "were")," multiplied by a factor of >",simulationSettings[["passFail"]],"."), paste0("based on the provided parameters and exposure profile",pluralS(n_profiles),", [compound] may pose an unacceptable risk to [species]."))` The results are summarised in Table \@ref(tab:summaryTable).
+
+
+# Results table
+Table \@ref(tab:summaryTable) shows the results generated for all profiles provided.
+```{r summaryTable, echo=FALSE, message=FALSE, results='asis', tab.id="summaryTable"}
+
+# enlarge the critEndpoint column if there are no values, otherwise the column will be very small
+if(all(is.na(summaryResults[,"critEndpoint"])))
+  summaryResults[,"critEndpoint"] <- "            "
+
+w <- flextable::flextable(summaryResults) %>% 
+  dim_pretty(., part="body") %>% 
+  .[["widths"]]
+
+w_max <- 6.799 # max width of the table in inches
+w_res <- w/sum(w)*w_max
+
+flextable::flextable(summaryResults) %>%
+  flextable::width(width = w_res) %>% 
+  fontsize(size=8, part="all") %>%
+  colformat_num( big.mark="") %>%
+  flextable::set_header_labels(values = list(
+    profileNames = "Profile names",
+    pass_fail_results = "Pass/ Fail",
+    critEndpoint = "Critical endpoint",
+    total_VTTs = "Total no. of VTTs", 
+    No._VTTs_thinned = "No. of VTTs thinned",
+    No._VTTs_tested = "No. of VTTs tested")
+    ) %>% 
+  set_caption(caption="Summary table of all provided profiles indicating passing the critical value for the ‘virtual toxicity tests’ (VTTs).", style="Table caption", autonum = tabNum) %>% 
+  flextable::flextable_to_rmd()
+```
+
+# Results for individual exposure profiles
+
+```{r indExpProfiles, echo=FALSE, message=FALSE, results='asis', warning=FALSE}
+out <- individualExpProfile(summaryResults, simulationSettings, plotResults, profileResults, expProfiles, time_unit = metaData[["Time"]])
+
+```
+
+
+# Parameters and Setting
+Table \@ref(tab:parameterTable) and \@ref(tab:simSettingsTable) contain the parameter values and settings used to make model predictions.
+```{r prepParametersTable, echo=FALSE, message=FALSE, results='hide'}
+
+mp <- makeParSettingTable(modelParameters, paraDescTable)
+
+mp.ft <- mp %>% 
+  flextable() %>%
+  flextable::width(j=1:(ncol(mp)-1), width=4/2.54) %>%
+  flextable::width(j=ncol(mp), width=9/2.54) %>%
+  colformat_double( big.mark="", digits=3) %>%
+  fontsize(size=10, part="all") %>%
+  align(i = NULL, j = NULL, align = "left", part = "all") %>% 
+  set_caption(caption="Model parameter table", style="Table caption", autonum = tabNum)
+```
+
+```{r printParametersTable, echo=FALSE, message=FALSE, results='asis', tab.id="parameterTable"}
+mp.ft %>% 
+  flextable_to_rmd()
+```
+ \ 
+ 
+
+```{r prepSimSettingsTable, echo=FALSE, message=FALSE, results='hide'}
+
+simSet <- makeParSettingTable(c(simulationSettings, metaData[c("Length", "Time", "Concentration")]), paraDescTable)
+
+simSet.ft <- simSet %>% 
+  flextable() %>%
+  flextable::width(j=1:(ncol(mp)-1), width=4/2.54) %>%
+  flextable::width(j=ncol(mp), width=9/2.54) %>%
+  fontsize(size=10, part="all") %>%
+  align(i = NULL, j = NULL, align = "left", part = "all") %>% 
+  colformat_double( big.mark="", digits=3) %>% 
+  set_caption(caption="Simulation settings table", style="Table caption", autonum = tabNum)
+```
+
+```{r printSimSettingsTable, echo=FALSE, message=FALSE, results='asis', tab.id="simSettingsTable"}
+simSet.ft %>% 
+  flextable_to_rmd()
+```
+
+# References
+- Jager, T. (2020). Revisiting simplified DEBtox models for analysing ecotoxicity data. Ecol. Model. 416, 108904. https://doi.org/10.1016/j.ecolmodel.2019.108904
+- Wittwer T, Jakoby O, Martin T, Sherborne N, Ashauer R (2023). deeptox: A User-Friendly R-Shiny Application To Make DEB-TKTD Projections Of Sublethal Effects Of Chemical Exposure. R package version `r packageVersion("deeptox")`.
+
+

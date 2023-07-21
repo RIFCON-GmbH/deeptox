@@ -1,0 +1,61 @@
+---
+title: "Import of TOXSWA files"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{toxswa_import}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+```{r setup_hidden, warning=FALSE, results='hide', message=FALSE, echo = FALSE}
+options(rmarkdown.html_vignette.check_title = FALSE)
+
+```
+
+```{r setup, warning=FALSE, results='hide', message=FALSE}
+library(deeptox)
+library(dplyr)
+```
+This is a primer explaining how to use the function of the deeptox package to load output files from TOXSWA ('.out'-files) and create a simplified timeseries that can be be loaded into DeEP.
+
+Set path to one or more out-files:
+```{r set_path1, echo=FALSE}
+fpath <- system.file("extdata",package="deeptox") %>%
+  list.files("\\d\\.out", full.names = T)
+```
+```{r set_path2, echo=TRUE, eval=FALSE}
+fpath <- c("1.out","2.out","3.out")
+```
+
+Read TOXSWA profiles with `readToxswaExpProfiles()`
+```{r import_toxswa}
+profiles <- readToxswaExpProfiles(fpath)
+```
+The returned object is a list with one element for each out-file loaded. The names are the filenames without extensions.
+```{r show_profile_names}
+names(profiles)
+```
+Each of the list elements is a two-column data.frame with the time in the first column and the external concentration in the second column.
+```{r show_profile_ex}
+head(profiles[[1]])
+```
+
+The profiles can be exported with `write.table()` for later imported into DeEP
+```{r write_toxswa, eval = FALSE}
+lapply(names(profiles), function(x){
+  write.table(profiles[[x]], file = paste0(x,".txt"), row.names = FALSE, col.names = FALSE, sep = "\t")
+})
+```
+
+Plotting of the profiles is possible with `plotExpProfiles()`
+```{r plot_profiles, message=FALSE, warning=FALSE, results='hide'}
+lapply(names(profiles), function(x){
+  plotExpProfiles(data=profiles[[x]], x="V1", y="V2", title=x)
+})
+```

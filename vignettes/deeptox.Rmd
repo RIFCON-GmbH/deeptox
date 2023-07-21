@@ -1,0 +1,152 @@
+---
+title: "deeptox"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{deeptox}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup, warning=FALSE}
+library(deeptox)
+library(magrittr)
+library(ggplot2)
+library(deSolve)
+library(rootSolve) # Needed for uniroot.all
+
+
+```
+
+## Introduction
+A simple showcase how the functions of the "deeptox" package can be used without the shiny GUI.
+
+## Loading exposure profiles
+
+```{r load-exposure-profiles}
+fpath <- system.file("extdata",package="deeptox") %>%
+  list.files("*.\\.txt", full.names = T)
+
+profiles <- readExpProfiles(fpath)
+head(profiles[[1]])
+
+```
+
+```{r plot-exposure-profiles, echo=TRUE}
+lapply(names(profiles), function(x){
+  plotExpProfiles(data=profiles[[x]], x="V1", y="V2", title=x)
+})
+```
+
+## Set parameters
+
+```{r example-parameters}
+parms <-
+  c(f = 1, rB = 0.1305, Lp = 2.627, Lm = 3.834, Rm = 14.76, kap = 0.8, F_BV = 1.0, K_RV = 1.0, # phys parameters
+    b_s = 0.000772, z_s = 478.6, h_b = 0.00, # survival. hb should always be zero in standard applications
+    z_b = 95.92, b_b = 0.03297, kd = 1.107, # sublethal tox. pars and uptake/elimination rate
+    Xu = 1.0, Xe = 0.0, XG = 0, XR = 0, # Feedbacks, either 1 (on) or 0 (off) for each. xu: uptake scaled by surface area:volume, xe: elimination scaled by surface area:volume, xG: dilution by growth, xR: dilution by reproduction
+    SA = 0.0, SM = 0.0, SG = 0, SR1 = 0, SR2 = 1, yP = 0.8 # set pMoA. SA - assimilation (reduced intake), SM - maintenance (increased costs), SG - growth (increased costs), SR1 - reproduction (increased costs), SR2 - reproduction (hazard to embryo)
+  )
+# LM_TK: Optional. specify reference Lm for scaled damage ODE, useful when comparing across experiments. 
+#        Set to some value, or set to parms["Lm"] to keep same Lm from calibration
+parms["Lm_TK"] = 5
+
+
+# DO NOT REMOVE OR CHANGE THE ORDER OF ANY OF THESE PARAMETERS
+
+L0 <- 0.924 # initial size at the start of the time window
+y0 <-  c(y1 = L0, y2 = 0, y3 = 1, y4 = 0) # Init cond at start of window. y1 = length, y2 = cumul. repro, y3 = survival, y4 = scaled damage
+parms["L0"] <- y0[1]
+
+# Set initial options:
+thinning <- T # thin out some of the time windows? Not recommended if xe = 1
+ECpct <- 10 # What percentage of effects do we want to find with the model?
+windowLength <- 21 # How long (days) is the time window
+interval <- 1#1/24 # length of time (in days) between starts of successive windows
+padDt <- 1#1/24 # time (days) between padding zeros into the profile to cover whole profile with all ages.
+detail <- TRUE # find actual values (TRUE) or just assess at passFail value (FALSE)
+cutOff <- 1000 # multiplying factor above which we don't care about the exact value.
+passFail <- 10 # chronic AF value used in all risk assessments for pass/fail.
+```
+
+
+## Plot padded exposure profiles
+
+```{r create-and-plot-padded-exposure-profiles}
+# add zero concentration to before and after profile
+paddedProfiles <- lapply(profiles, add_padding, dt = padDt, windowLength = windowLength)
+
+lapply(names(paddedProfiles), function(x){
+  plotExpProfiles(data=paddedProfiles[[x]], x="V1", y="V2", title=x)
+})
+
+```
+
+## Assess exposure
+
+```{r create-windows-and-run-predictions, cache=TRUE, results='hide'}
+ # construct all time windows
+windows <- lapply(paddedProfiles, organise_windows, windowLength=windowLength, interval=interval)
+
+# get rid of ones which will never be worst case.
+if (thinning) windows_proc <- lapply(windows, thinWindows)
+if (!thinning) windows_proc <- windows
+
+thisProfile <- lapply(windows_proc, moving_time_windows, parms=parms, y0=y0, cutOff=cutOff, ECpct=ECpct, detail=detail, passFail=passFail, progressBar="txt")
+```
+
+### Plot failures
+```{r plot-failures}
+plotFailures_rect_res <- lapply(names(paddedProfiles), function(i){
+  tmax <- max(paddedProfiles[[i]][,1])
+  plotFailures_rect(paddedProfiles[[i]],
+                    thisProfile[[i]][,"startTime"],
+                    thisProfile[[i]][,"EPxResults"],
+                    interval=interval,
+                    tmax=tmax, 
+                    xunit = "d", 
+                    yunit = "mg/L"
+                    ) +
+    ggtitle(i)
+})
+plotFailures_rect_res
+```
+
+### Plot EPx multiplier curve
+```{r plot-EPx, warning=FALSE}
+plotEPx_res <- lapply(names(paddedProfiles), function(i){
+  tmax <- max(paddedProfiles[[i]][,1])
+  plotEPx(thisProfile[[i]][,"startTime"],
+          thisProfile[[i]][,"EPxResults"],
+          interval=interval,
+          tmax=tmax,
+          windowLength=windowLength,
+          passFail=passFail,
+          cutOff=cutOff,
+          xunit="d") +
+    ggtitle(i)
+})
+plotEPx_res
+```
+
+## Summary
+
+```{r summaryResults}
+totalSummary <- do.call(rbind,
+                        lapply(names(windows),
+                               summaryForSingleProfile,
+                               windows = windows,
+                               windows_proc = windows_proc,
+                               thisProfile = thisProfile,
+                               passFail=passFail
+                               )
+                        )
+knitr::kable(totalSummary)
+```

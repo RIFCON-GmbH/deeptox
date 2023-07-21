@@ -1,0 +1,91 @@
+/*remove the spin button of the numericInput widget
+source: https://stackoverflow.com/questions/70974838/removing-up-down-arrows-from-numericinput-r-shiny
+*/
+input[type=number] {
+      -moz-appearance:textfield;
+}
+input[type=number]::{
+      -moz-appearance:textfield;
+}
+input[type=number]::-webkit-outer-spin-button,
+input[type=number]::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+} 
+
+
+.info-circle-link{
+  font-size: 9px;
+  vertical-align: super;
+  color: DimGrey;
+}
+
+.info-circle-link:hover {
+  color: #355d75;/*#c8e7f9;#019934;*/
+  /*color: Green;*/
+}
+
+.box_intro_text{
+  color: black;
+  margin-bottom: 10px;
+}
+
+div.main-title{
+  font-size: 20px;
+  font-weight: bold;
+}
+
+.box.box-solid.box-info>.box-header h3, .box.box-info>.box-header h3{
+  color: #fff;
+}
+
+div.modal-content {
+  overflow: auto;
+  border-radius: 6px;
+  border: 1px solid rgba(0,0,0,.2);
+}
+
+a{
+  color: "#8ca2b0";/*DimGray;*/ /*#3c8dbc;*/
+  
+}
+
+a:active,a:focus,a:hover{
+  outline:0;
+  text-decoration:none;
+  color: DarkGray;/*#72afd2;*/
+}
+
+.box-primary{
+  background: #ededed;/*#E8E8E8;*/
+}
+
+.box-info{
+  background: #ededed;/*#E8E8E8;*/
+}
+
+.inbox-section-header {
+  font-style: italic;
+  font-size: small;
+}
+
+div.version_number {
+   font-size: 0.5em;
+}
+
+.italic-note {
+  font-style: italic;
+  font-size: small;
+  padding-top: 10px;
+  padding-bottom: 0px;
+}
+
+
+/*.modal-body, .modal-header, .modal-footer {
+    background-color: #ff0000;
+}*/
+
+/*.shiny-file-input-progress {
+  display: none
+  
+}*/

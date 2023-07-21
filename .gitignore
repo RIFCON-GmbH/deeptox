@@ -1,0 +1,14 @@
+inst/doc
+/doc/
+/Meta/
+.Rproj.user
+.Rbuildignore
+.Rhistory
+.dockerignore
+DESCRIPTION
+Dockerfile
+.Rdata
+.httr-oauth
+.DS_Store
+rsconnect
+tests
