@@ -22,7 +22,7 @@ app_server <- function( input, output, session ) {
   observe({
     # set size of files to be imported when running locally; needed for large TOXSWA files.
     if (sessionIP() == "127.0.0.1"){
-      options(shiny.maxRequestSize = 70*1024^2) 
+      options(shiny.maxRequestSize = 500*1024^2) 
     }
   })
   
