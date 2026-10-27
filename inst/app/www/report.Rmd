@@ -26,12 +26,6 @@ library(officer)
 library(officedown)
 library(deeptox)
 
-
-
-tabNum <- officer::run_autonum(seq_id = "Table",
-                                pre_label = "Table\u00A0",
-                                post_label = ": ")
-
 ```
 
 ```{r prepImportedData, echo=FALSE, message=FALSE}
@@ -83,7 +77,7 @@ The results are summarised in Table \@ref(tab:summaryTable).
 
 # Results table
 Table \@ref(tab:summaryTable) shows the results generated for all profiles provided.
-```{r summaryTable, echo=FALSE, message=FALSE, results='asis', tab.id="summaryTable"}
+```{r summaryTable, echo=FALSE, message=FALSE, results='asis'}
 
 # enlarge the critEndpoint column if there are no values, otherwise the column will be very small
 if(all(is.na(summaryResults[,"critEndpoint"])))
@@ -107,8 +101,15 @@ flextable::flextable(summaryResults) %>%
     total_VTTs = "Total no. of VTTs", 
     No._VTTs_thinned = "No. of VTTs thinned",
     No._VTTs_tested = "No. of VTTs tested")
-    ) %>% 
-  set_caption(caption="Summary table of all provided profiles indicating passing the critical value for the ‘virtual toxicity tests’ (VTTs).", style="Table caption", autonum = tabNum) %>% 
+  ) %>% 
+  set_caption(caption="Summary table of all provided profiles indicating passing the critical value for the ‘virtual toxicity tests’ (VTTs).", 
+              style="Table caption", 
+              autonum = run_autonum(
+                seq_id = "Table",
+                pre_label = "Table\u00A0",
+                post_label = ": ",
+                bkm = "summaryTable"
+              )) %>% 
   flextable::flextable_to_rmd()
 ```
 
@@ -133,10 +134,17 @@ mp.ft <- mp %>%
   colformat_double( big.mark="", digits=3) %>%
   fontsize(size=10, part="all") %>%
   align(i = NULL, j = NULL, align = "left", part = "all") %>% 
-  set_caption(caption="Model parameter table", style="Table caption", autonum = tabNum)
+  set_caption(caption="Model parameter table", 
+              style="Table caption", 
+              autonum = run_autonum(
+                seq_id = "Table",
+                pre_label = "Table\u00A0",
+                post_label = ": ",
+                bkm = "parameterTable"
+              ))
 ```
 
-```{r printParametersTable, echo=FALSE, message=FALSE, results='asis', tab.id="parameterTable"}
+```{r printParametersTable, echo=FALSE, message=FALSE, results='asis'}
 mp.ft %>% 
   flextable_to_rmd()
 ```
@@ -154,10 +162,17 @@ simSet.ft <- simSet %>%
   fontsize(size=10, part="all") %>%
   align(i = NULL, j = NULL, align = "left", part = "all") %>% 
   colformat_double( big.mark="", digits=3) %>% 
-  set_caption(caption="Simulation settings table", style="Table caption", autonum = tabNum)
+  set_caption(caption="Simulation settings table", 
+              style="Table caption", 
+              autonum = run_autonum(
+                seq_id = "Table",
+                pre_label = "Table\u00A0",
+                post_label = ": ",
+                bkm = "simSettingsTable"
+              ))
 ```
 
-```{r printSimSettingsTable, echo=FALSE, message=FALSE, results='asis', tab.id="simSettingsTable"}
+```{r printSimSettingsTable, echo=FALSE, message=FALSE, results='asis'}
 simSet.ft %>% 
   flextable_to_rmd()
 ```
