@@ -35,26 +35,32 @@ import(stringr)
 import(units)
 importFrom(attempt,attempt)
 importFrom(digest,digest)
-importFrom(golem,activate_js)
-importFrom(golem,add_resource_path)
-importFrom(golem,bundle_resources)
-importFrom(golem,favicon)
-importFrom(golem,with_golem_options)
+importFrom(golem,
+  activate_js,
+  add_resource_path,
+  bundle_resources,
+  favicon,
+  with_golem_options
+)
 importFrom(htmltools,HTML)
 importFrom(magrittr,'%>%')
 importFrom(rmarkdown,render)
-importFrom(shiny,HTML)
-importFrom(shiny,NS)
-importFrom(shiny,actionLink)
-importFrom(shiny,column)
-importFrom(shiny,modalDialog)
-importFrom(shiny,shinyApp)
-importFrom(shiny,tagAppendAttributes)
-importFrom(shiny,tagList)
-importFrom(shiny,tags)
-importFrom(shinyjs,disable)
-importFrom(shinyjs,enable)
-importFrom(shinyjs,runjs)
-importFrom(shinyjs,useShinyjs)
+importFrom(shiny,
+  HTML,
+  NS,
+  actionLink,
+  column,
+  modalDialog,
+  shinyApp,
+  tagAppendAttributes,
+  tagList,
+  tags
+)
+importFrom(shinyjs,
+  disable,
+  enable,
+  runjs,
+  useShinyjs
+)
 importFrom(tibble,tibble)
 useDynLib(deeptox, .registration = TRUE)

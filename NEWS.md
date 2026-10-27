@@ -1,3 +1,11 @@
+# deeptox 1.0.1
+Add info text for units box and parameter fields
+
+* add explanatory text for the units info modal
+* include unit help content for length, time, and concentration
+* update package version/news metadata
+* minor cleanup in documentation formatting
+
 # deeptox 1.0.0
 * cleanup for v1
 

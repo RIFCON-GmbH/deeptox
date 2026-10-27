@@ -6,11 +6,6 @@
 \usage{
 readExpProfiles(pathtofiles, profileNames = NA)
 }
-\arguments{
-\item{pathtofiles}{}
-
-\item{profileNames}{}
-}
 \value{
 list of exposure profiles
 }
