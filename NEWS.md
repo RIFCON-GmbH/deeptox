@@ -1,3 +1,5 @@
+# deeptox 1.0.1
+
 # deeptox 1.0.0
 * cleanup for v1
 

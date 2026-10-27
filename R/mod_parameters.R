@@ -240,6 +240,24 @@ mod_parameters_server <- function(id, parameters_rv, triggerParamUpdate){
       )
     }, ignoreInit = TRUE)
     
+    ## units box ####
+    observeEvent(input[["boxinfo_unitsInfo"]],{
+      ns <- session$ns
+      
+      showModal(customModalDialog(title = NULL,
+                                  HTML(
+                                    paste0(
+                                      tags$h3("Units"),
+                                      "<br>",
+                                      textblocks()[["unitsBoxInfo"]]
+                                    )
+                                  ),
+                                  footer=tagList(NULL),
+                                  easyClose=TRUE,
+                                  marginTop = paste0(input[["btn_clicked_pos"]],"px"))
+      )
+    }, ignoreInit = TRUE)
+    
     ## phys parameters box ####
     observeEvent(input[["boxinfo_physParameters"]],{
       ns <- session$ns

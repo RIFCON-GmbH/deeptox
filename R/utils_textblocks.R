@@ -21,6 +21,10 @@ textblocks <- function(){
   as well the effects of exposure to a given chemical. Hover the mouse over the
   info button for full parameter names or click for more detailed information.",
   
+  ## unitsBoxInfo ####
+  unitsBoxInfo = "Information on the basic units  <b>length</b>,  <b>time</b> and 
+   <b>concentration</b> can be given here.",
+  
   ## physParaBoxInfo ####
   physParaBoxInfo = "The parameters for the physiological model describe the 
   rates of growth (cm/day) and reproduction (number of offspring/day) in the control 
