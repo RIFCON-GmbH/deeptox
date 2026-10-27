@@ -76,7 +76,9 @@ DeEP (DEB-TKTD EPx Predictor; Wittwer et al. 2023) was used to predict the effec
 
 The risk assessment criterion was`r ifelse(n_profiles==1 & n_failures==n_profiles," not","")` met for `r ifelse(n_profiles==1,"", ifelse(n_passes==n_profiles, "all of", ifelse(n_failures==n_profiles, "none of", "some of")))` the exposure profile`r pluralS(n_profiles)` provided.
 `r ifelse(n_profiles==1,"In this case", ifelse(n_passes==n_profiles, "In all cases", ifelse(n_failures==n_profiles, "In none of the cases", paste0("In only ",n2w(n_passes), " of ", n2w(n_profiles), " cases"))))` the EP~`r simulationSettings[["ECpct"]]`~ multiplier `r ifelse(n_profiles==1 & n_failures==n_profiles ,"was below","exceeded")` the critical value of `r simulationSettings[["passFail"]]`.
-Therefore, `r ifelse(n_passes==n_profiles, paste0("a ",simulationSettings[["ECpct"]],"% reduction in growth, survival, or reproduction would not be expected unless the exposure profile",pluralS(n_profiles)," ",ifelse(n_profiles==1,"was", "were")," multiplied by a factor of >",simulationSettings[["passFail"]],"."), paste0("based on the provided parameters and exposure profile",pluralS(n_profiles),", [compound] may pose an unacceptable risk to [species]."))` The results are summarised in Table \@ref(tab:summaryTable).
+Therefore, `r ifelse(n_passes==n_profiles, paste0("a ",simulationSettings[["ECpct"]],"% reduction in growth, survival, or reproduction would not be expected unless the exposure profile",pluralS(n_profiles)," ",ifelse(n_profiles==1,"was", "were")," multiplied by a factor of >",simulationSettings[["passFail"]],"."), 
+paste0("based on the provided parameters and exposure profile",pluralS(n_profiles),", ",metaData[["Compound"]]," may pose an unacceptable risk to ",metaData[["Species"]],"."))`
+The results are summarised in Table \@ref(tab:summaryTable).
 
 
 # Results table
