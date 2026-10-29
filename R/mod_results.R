@@ -114,16 +114,15 @@ mod_results_server <- function(id,
     # Save and run exposure assessment ####
     output[["saveAndRun"]] <- downloadHandler(
       filename = function() {
-        paste("deeptox-", get_time_human(), ".rds", sep="")
+        paste("deeptox-", get_time_human(), ".json", sep="")
       },
       content = function(file) {
         toSave <- makeProjectSnapshot(
           expProfiles = expProfiles_rv,
           parameters = parameters_rv, 
           profileResults = reactiveValues(),
-          summaryResults = reactiveVal(), 
-          plotResults = reactiveValues())
-        saveRDS(toSave, file=file)
+          summaryResults = reactiveVal())
+        jsonlite::write_json(toSave, path = file)
         removeModal()
         assesExpoOK(Sys.time())
       }

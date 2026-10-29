@@ -57,6 +57,60 @@ plotEPx <- function(sT, EP_V, interval, tmax, windowLength=21, passFail=10, cutO
   
 }
 
+#' Reconstruct EPx plots from imported JSON data
+#'
+#' Creates a list of EPx plots from an object imported via
+#' [jsonlite::read_json()]. The function extracts simulation settings,
+#' metadata, exposure profiles, and profile results from the imported
+#' structure and recreates the corresponding plots using [plotEPx()].
+#'
+#' This function is primarily intended for internal use when restoring
+#' previously exported simulation results.
+#'
+#' @param df_from_json A list created from a JSON file containing the
+#'   elements `simulationSettings`, `metaData`, `expProfiles`, and
+#'   `profileResults`.
+#'
+#' @return A named list of `ggplot` objects. Each list element corresponds
+#'   to one exposure profile and is named according to the entries in
+#'   `expProfiles`.
+#'
+#' @details
+#' For each exposure profile, the maximum simulation time is determined
+#' from the profile definition and passed to [plotEPx()]. Plot titles are
+#' set to the corresponding profile names.
+#'
+#' @seealso [plotEPx()]
+reconstruct_plotEPX <- function(df_from_json){
+  
+  sim_settings <- df_from_json$simulationSettings
+  md <- df_from_json$metaData
+  expProfiles <- df_from_json$expProfiles
+  profileResults <- df_from_json$profileResults
+  
+  if (length(profileResults) == 0){
+    return(list())
+  }
+  
+  plotEPx_res <- lapply(names(expProfiles), function(i){
+    tmax <- max(expProfiles[[i]][,1])
+    plotEPx(profileResults[[i]][,"startTime"],
+            profileResults[[i]][,"EPxResults"],
+            interval = sim_settings$interval,
+            tmax = tmax,
+            windowLength = sim_settings$windowLength,
+            passFail = sim_settings$passFail,
+            cutOff = sim_settings$cutOff,
+            xunit = md$Time
+    ) +
+      ggplot2::ggtitle(i)
+  })
+  names(plotEPx_res) <- names(expProfiles)
+  
+  plotEPx_res
+}
+
+
 #' Plot failures_rect
 #' 
 #' function plots the EPx multiplier curve. In cases where thinning has been used multiple
