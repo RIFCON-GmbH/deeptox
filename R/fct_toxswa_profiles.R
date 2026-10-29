@@ -45,12 +45,12 @@ pre_check_toxswa_files <- function(file_names, profileNames){
     lin <- readLines(file_names[i], encoding = "UTF-8", n = 20)
     isToxswa <- check_if_TOXSWA(lin)
     if ( !isToxswa ){
-      return(paste0(profileNames[i], ": not a toxswa file"))
+      return(paste0(htmltools::htmlEscape(profileNames[i]), ": not a toxswa file"))
     }
     
     is_supported_version <- check_if_TOXSWA_version(lin, supported_version = c("4","5.5.3"))
     if ( !is_supported_version ){
-      return(paste0(profileNames[i], ": unsupported TOXSWA version"))
+      return(paste0(htmltools::htmlEscape(profileNames[i]), ": unsupported TOXSWA version"))
     }
     
     return(NULL)

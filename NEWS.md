@@ -1,6 +1,6 @@
 # deeptox (development version)
 9000: remove unnecessary "deeptox:::"
-
+9001: Escape uploaded filenames before rendering validation errors  
 
 # deeptox 1.0.1
 Add info text for units box and parameter fields
