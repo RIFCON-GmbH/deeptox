@@ -94,7 +94,7 @@ moving_time_windows <- function(windows, parms, y0, cutOff, ECpct, tol = 1e-5, d
     pb <- txtProgressBar(min = 0, max = windowlength, style = 3) # progress bar to display in console
   if (progressBar=="shiny")
     #shinybusy::show_modal_progress_circle(text=paste0(scenName," Run windows. 0%"))
-    deeptox:::show_modal_progress_circle(text=paste0(scenName," Run windows. 0%"), top="90%")
+    show_modal_progress_circle(text=paste0(scenName," Run windows. 0%"), top="90%")
   
   for (i in 1:windowlength) {
     if (progressBar=="txt")

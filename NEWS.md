@@ -1,3 +1,7 @@
+# deeptox (development version)
+9000: remove unnecessary "deeptox:::"
+
+
 # deeptox 1.0.1
 Add info text for units box and parameter fields
 
