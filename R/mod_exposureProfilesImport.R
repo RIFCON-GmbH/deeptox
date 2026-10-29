@@ -260,7 +260,7 @@ mod_exposureProfilesImport_server <- function(id, expProfiles_rv){
                      filesToImport <- input[["importToxswaExpProfiles"]]$datapath
                      fileNames <- input[["importToxswaExpProfiles"]]$name %>% tools::file_path_sans_ext()
                      if (length(filesToImport)){
-                       deeptox:::show_modal_spinner( text = "Importing TOXSWA profiles. Omitting all files that are no TOXSWA out-files.", top = "90%" )
+                       show_modal_spinner( text = "Importing TOXSWA profiles. Omitting all files that are no TOXSWA out-files.", top = "90%" )
                        checked_toxswa_txt <- pre_check_toxswa_files(filesToImport, input[["importToxswaExpProfiles"]]$name)
                        update_modal_spinner(checked_toxswa_txt)
                        expProfilesImported <- readToxswaExpProfiles(filesToImport, fileNames)

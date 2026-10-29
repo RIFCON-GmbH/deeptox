@@ -172,7 +172,7 @@ mod_results_server <- function(id,
       y0 <- unlist(parmsList[ sort(grep("^y0_\\d{1}",names(parmsList), value=T)) ])
       names(y0) <- paste0("y",1:length(y0))
       
-      deeptox:::show_modal_spinner( text = "Construct all time windows.", top = "90%" )
+      show_modal_spinner( text = "Construct all time windows.", top = "90%" )
       ## add zero concentration to before and after profile ####
       paddedProfiles <- lapply(profiles, add_padding,
                                dt = padDt,
