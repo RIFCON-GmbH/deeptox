@@ -9,7 +9,7 @@
 #'
 #' @return a list with exposure profiles, metadata, simulation settings, model parameters, profile results, summary results, and plot of the results
 #' @noRd
-makeProjectSnapshot <- function(expProfiles, parameters, profileResults, summaryResults, plotResults){
+makeProjectSnapshot <- function(expProfiles, parameters, profileResults, summaryResults, plotResults = list()){
   
 
   combinedParameters <- rvtl(parameters)
@@ -30,6 +30,13 @@ makeProjectSnapshot <- function(expProfiles, parameters, profileResults, summary
     metaData <- list()
   }
 
+  if (plotResults |> inherits("reactivevalues")){
+    pR <- rvtl(plotResults)
+  } else {
+    pR <- list()
+  }
+  
+  
   out <- list(
     expProfiles = expProfiles(),
     metaData = metaData,
@@ -37,7 +44,7 @@ makeProjectSnapshot <- function(expProfiles, parameters, profileResults, summary
     modelParameters = modelParameters,
     profileResults = rvtl(profileResults),
     summaryResults = summaryResults(),
-    plotResults = rvtl(plotResults)
+    plotResults = pR
   )
 
   return(out)
@@ -59,11 +66,17 @@ makeProjectSnapshot <- function(expProfiles, parameters, profileResults, summary
 #' @return 1 if correctly imported
 #' @noRd
 loadProjectSnapshot <- function(pathname, expProfiles, parameters, profileResults, summaryResults, plotResults){
-  loadeddata <- readRDS(pathname)
+  loadeddata <- jsonlite::read_json(pathname, simplifyVector = TRUE)
+
+  loadeddata[["plotResults"]] <- loadeddata |> reconstruct_plotEPX()
   
   expProfiles(loadeddata[["expProfiles"]])
+  
+  if (length(loadeddata[["summaryResults"]]) == 0){
+    loadeddata["summaryResults"] <- list(NULL)
+  }
   summaryResults(loadeddata[["summaryResults"]])
-
+  
   
   combinedParameters <- c(loadeddata[["metaData"]],loadeddata[["modelParameters"]], loadeddata[["simulationSettings"]])
 

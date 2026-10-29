@@ -21,7 +21,7 @@ mod_projectExportImport_ui <- function(id){
           icon("upload", class = NULL,lib = "font-awesome"),
           "Load project"
         ),
-        accept=".rds",
+        accept=".json",
         width=72
       ),
       style="margin-left: 123px; margin-bottom: -15px; margin-top: -34px;"
@@ -87,13 +87,13 @@ mod_projectExportImport_server <- function(id,
     output[["saveProject"]] <- downloadHandler(
 
       filename = function() {
-        paste("deeptox-", get_time_human(), ".rds", sep="")
+        paste("deeptox-", get_time_human(), ".json", sep="")
       },
       content = function(file) {
-        toSave <- makeProjectSnapshot(expProfiles_rv, params2export, profileResults_rv, summaryResults_rv, plotResults_rv)
-        saveRDS(toSave, file=file)
+        toSave <- makeProjectSnapshot(expProfiles_rv, params2export, profileResults_rv, summaryResults_rv)
+        jsonlite::write_json(toSave, path = file)
       },
-      contentType = "application/rds"
+      contentType = "application/json"
     ) # end of downloadHandler
   
     
