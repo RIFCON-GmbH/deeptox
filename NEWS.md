@@ -1,7 +1,7 @@
-# deeptox (development version)
-9000: remove unnecessary "deeptox:::"
-9001: Escape uploaded filenames before rendering validation errors to prevent code injection
-9002: switch to json for input and output; reconstruction of ggplots on load of json necessary
+# deeptox 1.1.0
+* remove unnecessary "deeptox:::"
+* Escape uploaded filenames before rendering validation errors to prevent code injection
+* switch to json for input and output; reconstruction of ggplots on load of json necessary
 
 # deeptox 1.0.1
 Add info text for units box and parameter fields
