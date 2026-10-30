@@ -1,3 +1,6 @@
+# deeptox (development version)
+* minor addition to shinyapps.io deployment. Mark to install from github
+
 # deeptox 1.1.0
 * remove unnecessary "deeptox:::"
 * Escape uploaded filenames before rendering validation errors to prevent code injection

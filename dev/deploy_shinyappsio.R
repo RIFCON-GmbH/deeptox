@@ -1,3 +1,4 @@
+remotes::install_github("https://github.com/RIFCON-GmbH/deeptox")
 rsconnect::deployApp('.',
                      appName = "DeEP",
                      appTitle = "DeEP",
